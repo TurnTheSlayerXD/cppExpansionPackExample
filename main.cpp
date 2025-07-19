@@ -1,7 +1,8 @@
+#include <cassert>
+#include <variant>
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include <format>
 #include <algorithm>
 #include <optional>
 #include <tuple>
@@ -82,10 +83,43 @@ void print_spaced(std::ostream &stream, const T &first, const U &...args)
     }
 }
 
-#include <fstream>
+template <typename T>
+int foo() { return 1; }
+template <>
+int foo<int>() { return 2; }
+template <>
+int foo<float>() { return 4; }
+template <typename... T>
+int sumfoos() { return (foo<T>() + ...); }
+
+template <class T>
+struct S
+{
+    static auto fun()
+    {
+        return 0;
+    }
+};
+template <class... Rest>
+struct S<std::tuple<Rest...>>
+{
+    static auto fun()
+    {
+        return sumfoos<Rest...>();
+    }
+};
+
+template <class Tuple>
+int apply_sumfoos()
+{
+    return S<Tuple>::fun();
+}
 
 int main()
 {
+
+    std::tuple<int, float, double> t;
+    assert(apply_sumfoos<decltype(t)>() == 7);
 
 #if 0
     constexpr auto left = &Node<int>::left;
