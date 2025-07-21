@@ -112,11 +112,15 @@ struct S<std::tuple<Rest...>>
 template <class Tuple>
 int apply_sumfoos()
 {
+
     return S<Tuple>::fun();
 }
 
+
+
 int main()
 {
+
 
     std::tuple<int, float, double> t;
     assert(apply_sumfoos<decltype(t)>() == 7);
